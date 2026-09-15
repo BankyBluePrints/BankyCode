@@ -398,3 +398,19 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Local environments and generated Python files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+
+# Streamlit local configuration
+.streamlit/secrets.toml

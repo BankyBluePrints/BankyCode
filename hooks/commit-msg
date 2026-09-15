@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+set -eu
+
+message_file=${1:?"usage: commit-msg <commit-message-file>"}
+first_line=$(sed -n '1p' "$message_file")
+required_pattern='^[A-Z][A-Z0-9]+-[0-9]+: .{20,}$'
+
+if ! printf '%s\n' "$first_line" | grep -Eq "$required_pattern"; then
+    printf '%s\n'         "Commit message must match: TASK-123: description of at least 20 characters"
+    exit 1
+fi
