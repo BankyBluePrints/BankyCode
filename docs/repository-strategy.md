@@ -1,3 +1,9 @@
+# Repository strategy comparison
+
+This note compares three common ways to divide a multi-component system. It is a decision
+aid, not a universal recommendation: ownership, deployment coupling, access control,
+change frequency, and rollback boundaries should drive the choice.
+
 | **Criteria**                              | **Approach 1: Individual Repositories**                                                | **Approach 2: Technology-wise Grouping**                                               | **Approach 3: Functionality-wise Grouping**                                                |
 |-------------------------------------------|----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | **Repository Granularity**                | One repo per microservice, MFE, DB, SSIS, etc.                                        | One repo per technology (e.g., all APIs, all Angular MFEs, all DB scripts)            | One repo per business feature (includes related API, MFE, DB changes together)            |
@@ -15,3 +21,10 @@
 | **Build Runner / Image Support**          | ✅ Simple — build image per repo                                                       | ✅ Consistent image per repo                                                            | ❌ Difficult — may require hybrid runners or multi-stage builds due to mixed tech          |
 | **Audit & Access Control (Permissions)**  | ✅ Fine-grained per repo                                                               | ✅ Tech-based access possible                                                           | ⚠️ Complex — must grant access based on features rather than tech                          |
 | **Use Case Suitability**                  | Best for large enterprises with mature DevOps practices                               | Best for centralized teams (API team, UI team, DB team)                                | Best when business units are self-managed or have independent delivery pipelines           |
+
+## Practical decision rule
+
+Prefer separate repositories when components have independent ownership, release cadence,
+access controls, and rollback needs. Prefer a grouped repository when components normally
+change and release together. Document exceptions and reassess the boundary when operational
+coupling changes.

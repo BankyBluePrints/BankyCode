@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Compile Python
+        run: python -m compileall -q examples
+
+      - name: Check shell syntax
+        run: bash -n hooks/commit-msg hooks/validate-last-commit.sh
+
+      - name: Test commit-message hook
+        shell: bash
+        run: |
+          valid_file=$(mktemp)
+          invalid_file=$(mktemp)
+          trap 'rm -f "$valid_file" "$invalid_file"' EXIT
+          printf '%s\n' 'TASK-123: document safe promotion workflow' > "$valid_file"
+          printf '%s\n' 'fixed bug' > "$invalid_file"
+          hooks/commit-msg "$valid_file"
+          if hooks/commit-msg "$invalid_file"; then
+            echo "Invalid commit message was unexpectedly accepted"
+            exit 1
+          fi
